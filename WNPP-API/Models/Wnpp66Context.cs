@@ -17,6 +17,8 @@ public partial class Wnpp66Context : DbContext
 
     public virtual DbSet<MDropDown> MDropDowns { get; set; }
 
+    public virtual DbSet<TAccount> TAccounts { get; set; }
+
     public virtual DbSet<TBranch> TBranches { get; set; }
 
     public virtual DbSet<TBranchRegister> TBranchRegisters { get; set; }
@@ -25,7 +27,7 @@ public partial class Wnpp66Context : DbContext
 
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
 #warning To protect potentially sensitive information in your connection string, you should move it out of source code. You can avoid scaffolding the connection string by using the Name= syntax to read it from configuration - see https://go.microsoft.com/fwlink/?linkid=2131148. For more guidance on storing connection strings, see http://go.microsoft.com/fwlink/?LinkId=723263.
-        => optionsBuilder.UseSqlServer("Server=192.168.1.99;Database=WNPP66;UID=wnpp;PWD=P@55w0rd;TrustServerCertificate=True;MultipleActiveResultSets=true;");
+        => optionsBuilder.UseSqlServer("Server=localhost;Database=WNPP66;UID=wnpp;PWD=P@55w0rd;TrustServerCertificate=True;MultipleActiveResultSets=true;");
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -46,6 +48,27 @@ public partial class Wnpp66Context : DbContext
             entity.Property(e => e.ModifiedDate).HasColumnType("datetime");
             entity.Property(e => e.Notation).HasMaxLength(500);
             entity.Property(e => e.RecordStatus).HasMaxLength(10);
+        });
+
+        modelBuilder.Entity<TAccount>(entity =>
+        {
+            entity.ToTable("T_Account");
+
+            entity.Property(e => e.Id).HasColumnName("ID");
+            entity.Property(e => e.CreatedByName).HasMaxLength(100);
+            entity.Property(e => e.CreatedDate).HasColumnType("datetime");
+            entity.Property(e => e.DisplayName).HasMaxLength(250);
+            entity.Property(e => e.Email)
+                .HasMaxLength(100)
+                .HasColumnName("EMail");
+            entity.Property(e => e.ExpireDate).HasColumnType("datetime");
+            entity.Property(e => e.ModifiedByName).HasMaxLength(100);
+            entity.Property(e => e.ModifiedDate).HasColumnType("datetime");
+            entity.Property(e => e.Notation).HasMaxLength(500);
+            entity.Property(e => e.Password).HasMaxLength(500);
+            entity.Property(e => e.RecordStatus).HasMaxLength(10);
+            entity.Property(e => e.Ref1).HasMaxLength(250);
+            entity.Property(e => e.Ref2).HasMaxLength(250);
         });
 
         modelBuilder.Entity<TBranch>(entity =>

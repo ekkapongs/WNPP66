@@ -3,50 +3,121 @@
 
 using DocumentFormat.OpenXml.Packaging;
 using DocumentFormat.OpenXml.Spreadsheet;
+using DocumentFormat.OpenXml.Wordprocessing;
+using System.Reflection.Metadata;
 using System.Text.RegularExpressions;
 using WNPP_API.Models;
+using WNPP_Tools;
+using Run = DocumentFormat.OpenXml.Wordprocessing.Run;
+using Text = DocumentFormat.OpenXml.Wordprocessing.Text;
 
-Console.WriteLine(" === Read Excel Data === ");
-//String docName = @"d:\Branch25661001.v.3.xlsx";
-//String docName = @"d:\branch.v.4.csv";
-//string docName = @"C:\Users\Public\Documents\Sheet4.xlsx";
-//String docName = @"d:\branch.v.4.xlsx";
-String docName = @"d:\branch.v.5.xlsx";
 
-///=== สาขา
-//string worksheetName = "สาขา";
-//string startNewRow = "สาขาที่";
-//int branchType = 1;
-//string branchTypeName = worksheetName;
-
-///=== สำรอง
-//string worksheetName = "สำรอง";
-//string startNewRow = "สำรองที่";
-//int branchType = 2;
-//string branchTypeName = worksheetName;
-
-///=== สำรวจ
-string worksheetName = "สำรวจ";
-string startNewRow = "สำรวจที่";
-int branchType = 3;
-string branchTypeName = worksheetName;
-
-/// START cloumn [A B C , D E F ]
-string currentColumn = "A";
-
-string monasteryTypeName1 = "วัด";
-string monasteryTypeName2 = "ที่พักสงฆ์";
-
-string startNewAdd = "ที่ตั้ง";
-string startNewCall = "โทร";
-string startNewOrd = "อุปสมบท";
-string startCertifier = "ผู้รับรอง";
 
 //test01();
-migrate02();
+//migrate02(); /// ==> Load Excel to database
+//migrate03(); /// ==> Test write doc
+//migrate04(); /// ==> Add account 
+//migrate05(); /// ==> Add Monk 66
+void migrate05()
+{
+	Console.WriteLine(" === Add Account === ");
+	Console.WriteLine(" === Open Connection === ");
+	Wnpp66Context ctx = new Wnpp66Context();
+}
+void migrate04()
+{
+	Console.WriteLine(" === Add Account === ");
+	Console.WriteLine(" === Open Connection === ");
+	Wnpp66Context ctx = new Wnpp66Context();
+
+	TAccount account = new TAccount();
+
+	account.ActiveStatus = true;
+	account.Language = 1;
+	account.Notation = "Test Admin";
+	account.CreatedDate = DateTime.Now;
+	account.ExpireDate = DateTime.Now.AddYears(1);
+	account.DisplayName = "Administrator";
+	account.Email = "admin@gmail.com";
+	account.Password = "password1234";
+
+	ctx.TAccounts.Add(account);
+
+	account = new TAccount();
+
+	account.ActiveStatus = true;
+	account.Language = 1;
+	account.Notation = "Test Operator";
+	account.CreatedDate = DateTime.Now;
+	account.ExpireDate = DateTime.Now.AddYears(1);
+	account.DisplayName = "Operator";
+	account.Email = "office@gmail.com";
+	account.Password = "password";
+
+	ctx.TAccounts.Add(account);
+
+	account = new TAccount();
+
+	account.ActiveStatus = true;
+	account.Language = 1;
+	account.Notation = "Test User";
+	account.CreatedDate = DateTime.Now;
+	account.ExpireDate = DateTime.Now.AddYears(1);
+	account.DisplayName = "User";
+	account.Email = "user@gmail.com";
+	account.Password = "1234";
+
+	ctx.TAccounts.Add(account);
+
+	ctx.SaveChanges();
+}
+void migrate03()
+{
+	string strDoc = @"d:\Letter.docx";
+
+	//WriteDoc writeDoc = new WriteDoc();
+
+	WriteDoc.SearchAndReplace(strDoc);
+}
 
 void migrate02()
 {
+	Console.WriteLine(" === Read Excel Data === ");
+	//String docName = @"d:\Branch25661001.v.3.xlsx";
+	//String docName = @"d:\branch.v.4.csv";
+	//string docName = @"C:\Users\Public\Documents\Sheet4.xlsx";
+	//String docName = @"d:\branch.v.4.xlsx";
+	String docName = @"d:\branch.v.5.xlsx";
+
+	///=== สาขา
+	//string worksheetName = "สาขา";
+	//string startNewRow = "สาขาที่";
+	//int branchType = 1;
+	//string branchTypeName = worksheetName;
+
+	///=== สำรอง
+	//string worksheetName = "สำรอง";
+	//string startNewRow = "สำรองที่";
+	//int branchType = 2;
+	//string branchTypeName = worksheetName;
+
+	///=== สำรวจ
+	string worksheetName = "สำรวจ";
+	string startNewRow = "สำรวจที่";
+	int branchType = 3;
+	string branchTypeName = worksheetName;
+
+	/// START cloumn [A B C , D E F ]
+	string currentColumn = "A";
+
+	string monasteryTypeName1 = "วัด";
+	string monasteryTypeName2 = "ที่พักสงฆ์";
+
+	string startNewAdd = "ที่ตั้ง";
+	string startNewCall = "โทร";
+	string startNewOrd = "อุปสมบท";
+	string startCertifier = "ผู้รับรอง";
+
 	Console.WriteLine(" === Open Connection === ");
 	Wnpp66Context ctx = new Wnpp66Context();
 
