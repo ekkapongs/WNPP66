@@ -1,52 +1,72 @@
 ﻿// See https://aka.ms/new-console-template for more information
 
-
 using DocumentFormat.OpenXml.Packaging;
 using DocumentFormat.OpenXml.Spreadsheet;
 using System.Text.RegularExpressions;
 using WNPP_API.Models;
+using WNPP_API.Services;
 
-Console.WriteLine(" === Read Excel Data === ");
-//String docName = @"d:\Branch25661001.v.3.xlsx";
-//String docName = @"d:\branch.v.4.csv";
-//string docName = @"C:\Users\Public\Documents\Sheet4.xlsx";
-//String docName = @"d:\branch.v.4.xlsx";
-String docName = @"d:\branch.v.5.xlsx";
-
-///=== สาขา
-//string worksheetName = "สาขา";
-//string startNewRow = "สาขาที่";
-//int branchType = 1;
-//string branchTypeName = worksheetName;
-
-///=== สำรอง
-//string worksheetName = "สำรอง";
-//string startNewRow = "สำรองที่";
-//int branchType = 2;
-//string branchTypeName = worksheetName;
-
-///=== สำรวจ
-string worksheetName = "สำรวจ";
-string startNewRow = "สำรวจที่";
-int branchType = 3;
-string branchTypeName = worksheetName;
-
-/// START cloumn [A B C , D E F ]
-string currentColumn = "A";
-
-string monasteryTypeName1 = "วัด";
-string monasteryTypeName2 = "ที่พักสงฆ์";
-
-string startNewAdd = "ที่ตั้ง";
-string startNewCall = "โทร";
-string startNewOrd = "อุปสมบท";
-string startCertifier = "ผู้รับรอง";
 
 //test01();
-migrate02();
+//migrate02();
+void migrate03()
+{
+	Console.WriteLine(" === Open Connection === ");
+	Wnpp66Context ctx = new Wnpp66Context();
+	TBook book = null;
+
+	book = new TBook()
+	{
+		ActiveStatus = CommonServices._Record_Active,
+		Language = CommonServices._Lang_TH,
+		CreatedBy = CommonServices._Admin_ID,
+		CreatedByName = CommonServices._Admin_Name,
+		CreatedDate = DateTime.Now,
+
+		BookName = "",
+		Author = "พระโพธิญาณเถร (ชา สุภทฺโท)",
+
+	};
+}
 
 void migrate02()
 {
+	Console.WriteLine(" === Read Excel Data === ");
+	//String docName = @"d:\Branch25661001.v.3.xlsx";
+	//String docName = @"d:\branch.v.4.csv";
+	//string docName = @"C:\Users\Public\Documents\Sheet4.xlsx";
+	//String docName = @"d:\branch.v.4.xlsx";
+	String docName = @"d:\branch.v.5.xlsx";
+
+	///=== สาขา
+	//string worksheetName = "สาขา";
+	//string startNewRow = "สาขาที่";
+	//int branchType = 1;
+	//string branchTypeName = worksheetName;
+
+	///=== สำรอง
+	//string worksheetName = "สำรอง";
+	//string startNewRow = "สำรองที่";
+	//int branchType = 2;
+	//string branchTypeName = worksheetName;
+
+	///=== สำรวจ
+	string worksheetName = "สำรวจ";
+	string startNewRow = "สำรวจที่";
+	int branchType = 3;
+	string branchTypeName = worksheetName;
+
+	/// START cloumn [A B C , D E F ]
+	string currentColumn = "A";
+
+	string monasteryTypeName1 = "วัด";
+	string monasteryTypeName2 = "ที่พักสงฆ์";
+
+	string startNewAdd = "ที่ตั้ง";
+	string startNewCall = "โทร";
+	string startNewOrd = "อุปสมบท";
+	string startCertifier = "ผู้รับรอง";
+
 	Console.WriteLine(" === Open Connection === ");
 	Wnpp66Context ctx = new Wnpp66Context();
 
