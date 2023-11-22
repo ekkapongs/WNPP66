@@ -4,6 +4,13 @@ namespace WNPP_API.Services
 {
 	public interface IBranchService
 	{
+		public TBranch getBranch(int id);
+		public List<TBranch> getBranchsByBranchType(int branchType);
+
+		public List<TBranch> findByMonasteryName(String monasteryName);
+		public List<TBranch> findByAbbotName(String abbotName);
+
+
 		public List<TBranch> listBranch(int branchType = 0);
 		public TBranch addBranch(TBranch data);
 		public TBranch updateBranch(TBranch data);
@@ -17,6 +24,95 @@ namespace WNPP_API.Services
 		public BranchService(ILogger<BranchService> logger)
 		{
 		}
+		public List<TBranch> findByAbbotName(String abbotName)
+		{
+			List<TBranch> result = new List<TBranch>();
+			try
+			{
+				var rows = ctx.TBranches.Where(x =>
+						x.ActiveStatus == true &&
+						x.AbbotName.Contains(abbotName))
+						.ToList();
+
+				if (!rows.Any())
+					throw new Exception($"The Abbot Name [{abbotName}] is not found. ");
+
+				result = rows;
+			}
+			catch (Exception)
+			{
+				throw;
+			}
+			return result;
+		}
+		public List<TBranch> findByMonasteryName(String monasteryName)
+		{
+			List<TBranch> result = new List<TBranch>();
+			try
+			{
+				var rows = ctx.TBranches.Where(x =>
+						x.ActiveStatus == true &&
+						x.MonasteryName.Contains(monasteryName))
+						.ToList();
+
+				if (!rows.Any())
+					throw new Exception($"The Monastery Name [{monasteryName}] is not found. ");
+
+				result = rows;
+			}
+			catch (Exception)
+			{
+				throw;
+			}
+			return result;
+		}
+		public List<TBranch> getBranchsByBranchType(int branchType)
+		{
+			List<TBranch> result = new List<TBranch>();
+			try
+			{
+				var rows = ctx.TBranches.Where(x =>
+						x.ActiveStatus == true &&
+						x.BranchType == branchType)
+						.ToList();
+
+				if (!rows.Any())
+					throw new Exception($"The Branch Type ID [{branchType}] is not found. " );
+
+				result = rows;
+			}
+			catch (Exception)
+			{
+				throw;
+			}
+			return result;
+		}
+		public TBranch getBranch(int id)
+		{
+			TBranch result;
+			try
+			{
+				var rows = ctx.TBranches.Where(x =>
+						x.ActiveStatus == true &&
+						x.Id == id)
+						.ToList();
+				if (!rows.Any())
+					throw new Exception($"The Branch ID [{id}] is not found. ");
+
+				result = rows.First();
+			}
+			catch (Exception)
+			{
+				throw;
+			}
+			return result;
+		}
+		/// <summary>
+		/// ต้องทำการปรับปรุง บาง Field ไม่ใช่ทั้ง Entity
+		/// ต้องหาวิธีหใหม่
+		/// </summary>
+		/// <param name="data"></param>
+		/// <returns></returns>
 		public TBranch updateBranch(TBranch data)
 		{
 			var transaction = ctx.Database.BeginTransaction();
@@ -26,11 +122,13 @@ namespace WNPP_API.Services
 						x.ActiveStatus == true &&
 						x.Id == data.Id)
 						.ToList();
-				if (row.Any())
-					throw new Exception("The Branch ID is not found. " + data.Id);
+
+				if (!row.Any())
+					throw new Exception($"The Branch ID [{data.Id}] is not found. ");
 
 				data.ModifiedDate = DateTime.Now;
 				ctx.TBranches.Update(data);
+				ctx.SaveChanges();
 
 				transaction.Commit();
 			}
@@ -50,11 +148,13 @@ namespace WNPP_API.Services
 						x.ActiveStatus == true && 
 						x.MonasteryName.Contains(data.MonasteryName))
 					.ToList();
-				if (row.Any() ) 
-					throw new Exception("The MonasteryName is already. " + data.MonasteryName);
+
+				if (row.Any()) 
+					throw new Exception("The Monastery Name is already. " + data.MonasteryName);
 				
 				data.CreatedDate = DateTime.Now;
 				ctx.TBranches.Add(data);
+				ctx.SaveChanges();
 
 				transaction.Commit();
 			}

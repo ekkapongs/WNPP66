@@ -2,18 +2,22 @@
 
 using DocumentFormat.OpenXml.Packaging;
 using DocumentFormat.OpenXml.Spreadsheet;
+using Microsoft.Extensions.Hosting;
 using System.Text.RegularExpressions;
 using WNPP_API.Models;
 using WNPP_API.Services;
 
 
 //test01();
-//migrate02();
+migrate02(); /// ==> Branch
+//migrate03(); /// ==> Book Store
+
 void migrate03()
 {
 	Console.WriteLine(" === Open Connection === ");
 	Wnpp66Context ctx = new Wnpp66Context();
 	TBook book = null;
+	List<TBook> listBook = new List<TBook>();
 
 	book = new TBook()
 	{
@@ -22,11 +26,52 @@ void migrate03()
 		CreatedBy = CommonServices._Admin_ID,
 		CreatedByName = CommonServices._Admin_Name,
 		CreatedDate = DateTime.Now,
-
-		BookName = "",
+		Isbn = "0",
+		BookName = "คู่มือทำวัตร – สวดมนต์แปล",
 		Author = "พระโพธิญาณเถร (ชา สุภทฺโท)",
-
+		Publisher = "ศูนย์ฯ",
+		IsDhammaHeritage = true,
+		Cost = 25,
+		InStock = 1520,
 	};
+	listBook.Add(book);
+
+	book = new TBook()
+	{
+		ActiveStatus = CommonServices._Record_Active,
+		Language = CommonServices._Lang_TH,
+		CreatedBy = CommonServices._Admin_ID,
+		CreatedByName = CommonServices._Admin_Name,
+		CreatedDate = DateTime.Now,
+		Isbn = "1",
+		BookName = "อุปลมณี",
+		Author = "พระโพธิญาณเถร (ชา สุภทฺโท)",
+		Publisher = "ศูนย์ฯ",
+		IsDhammaHeritage = true,
+		Cost = 300,
+		InStock = 144,
+	};
+	listBook.Add(book);
+
+	book = new TBook()
+	{
+		ActiveStatus = CommonServices._Record_Active,
+		Language = CommonServices._Lang_TH,
+		CreatedBy = CommonServices._Admin_ID,
+		CreatedByName = CommonServices._Admin_Name,
+		CreatedDate = DateTime.Now,
+		Isbn = "2",
+		BookName = "น้ำไหลนิ่ง",
+		Author = "พระโพธิญาณเถร (ชา สุภทฺโท)",
+		Publisher = "ศูนย์ฯ",
+		IsDhammaHeritage = true,
+		Cost = 30,
+		InStock = 3708,
+	};
+	listBook.Add(book);
+
+	ctx.TBooks.AddRange(listBook);
+	ctx.SaveChanges();
 }
 
 void migrate02()
@@ -36,7 +81,9 @@ void migrate02()
 	//String docName = @"d:\branch.v.4.csv";
 	//string docName = @"C:\Users\Public\Documents\Sheet4.xlsx";
 	//String docName = @"d:\branch.v.4.xlsx";
-	String docName = @"d:\branch.v.5.xlsx";
+	//String docName = @"d:\branch.v.5.xlsx";
+	//String docName = @"d:\B01.csv";
+	String docName = @"d:\B08.xlsx";
 
 	///=== สาขา
 	//string worksheetName = "สาขา";
