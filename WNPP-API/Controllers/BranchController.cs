@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using WNPP_API.Models;
 using WNPP_API.Services;
+using WNPP_API.ViewModel;
 
 namespace WNPP_API.Controllers
 {
@@ -8,24 +9,25 @@ namespace WNPP_API.Controllers
 	[Route("[controller]/[action]")]
 	public class BranchController : ControllerBase
 	{
-		private IBranchService _service;
+		private readonly IBranchService _service;
 		private readonly ILogger<BranchController> _logger;
 
-		public BranchController(ILogger<BranchController> logger)
+		public BranchController(
+			ILogger<BranchController> logger)
 		{
 			_logger = logger;
 			_service = new BranchService();
 		}
 		[HttpPost]
 		[ActionName("UpdateBranch")]
-		public TBranch UpdateBranch(TBranch data)
+		public TBranchViewModel UpdateBranch(TBranchViewModel data)
 		{
 			_logger.LogTrace("UpdateBranch Data : " + data);
 			return _service.updateBranch(data);
 		}
 		[HttpPost]
 		[ActionName("AddBranch")]
-		public TBranch AddBranch(TBranch data)
+		public TBranchViewModel AddBranch(TBranchViewModel data)
 		{
 			_logger.LogTrace("AddBranch Data : " + data);
 			return _service.addBranch(data);
@@ -47,24 +49,10 @@ namespace WNPP_API.Controllers
 
 		[HttpGet]
 		[ActionName("ListBranch")]
-		public List<TBranch> ListBranch(int branchType =0)
+		public List<TBranchViewModel> ListBranch(int branchType =0)
 		{
 			_logger.LogTrace("ListBranch Type : " + branchType);
 			return _service.listBranch(branchType);
-		}
-		[HttpGet]
-		[ActionName("GetBranchType")]
-		public List<TBranch> GetBranchType(int branchType = 0)
-		{
-			_logger.LogTrace("GetBranchType ID : " + branchType);
-			return _service.getBranchsByBranchType(branchType);
-		}
-		[HttpGet]
-		[ActionName("GetBranch")]
-		public TBranch GetBranch(int id)
-		{
-			_logger.LogTrace("GetBranch ID : " + id);
-			return _service.getBranch(id);
 		}
 	}
 }
