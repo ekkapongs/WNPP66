@@ -1,5 +1,6 @@
 ﻿// See https://aka.ms/new-console-template for more information
 
+using DocumentFormat.OpenXml.Drawing.Spreadsheet;
 using DocumentFormat.OpenXml.Packaging;
 using DocumentFormat.OpenXml.Spreadsheet;
 using Microsoft.Extensions.Hosting;
@@ -9,9 +10,169 @@ using WNPP_API.Services;
 
 
 //test01();
-migrate02(); /// ==> Branch
 //migrate03(); /// ==> Book Store
 
+//migrate02(); /// ==> Branch
+//migrate02_67(); /// ==> Branch
+//migrate02_67_02(); /// ==> Branch ==> OK
+migrate02_67_02_1(); /// ==> Branch Get Image
+
+void migrate02_67_02_1()
+{
+	{
+		string fileName = @"d:\AllNewContract2567v.1.00.01.xlsx";
+		string sheetName = "สำรวจ";
+
+		using (FileStream fs = new FileStream(fileName, FileMode.Open, FileAccess.Read, FileShare.ReadWrite))
+		{
+			using (SpreadsheetDocument doc = SpreadsheetDocument.Open(fs, false))
+			{
+				WorkbookPart workbookPart = doc.WorkbookPart;
+				var workSheet = workbookPart.WorksheetParts.FirstOrDefault();
+
+				foreach (ImagePart i in workSheet.DrawingsPart.ImageParts)
+				{
+					var rId = workSheet.DrawingsPart.GetIdOfPart(i);
+
+					Stream stream = i.GetStream();
+					long length = stream.Length;
+					byte[] byteStream = new byte[length];
+					stream.Read(byteStream, 0, (int)length);
+
+					var imageAsString = Convert.ToBase64String(byteStream);
+					Console.WriteLine("The rId of this Image is '{0}' data {1}", rId, imageAsString);
+				}
+
+			}
+		}
+	}
+}
+void migrate02_67_02()
+{
+	string fileName = @"d:\AllNewContract2567v.1.00.01.xlsx";
+	string sheetName = "สำรวจ";
+
+	using (FileStream fs = new FileStream(fileName, FileMode.Open, FileAccess.Read, FileShare.ReadWrite))
+	{
+		using (SpreadsheetDocument doc = SpreadsheetDocument.Open(fs, false))
+		{
+			WorkbookPart workbookPart = doc.WorkbookPart;
+			SharedStringTablePart sstpart = workbookPart.GetPartsOfType<SharedStringTablePart>().First();
+			SharedStringTable sst = sstpart.SharedStringTable;
+
+			WorksheetPart worksheetPart = GetWorksheetPartByName(doc, sheetName);
+			Worksheet sheet = worksheetPart.Worksheet;
+
+			var cells = sheet.Descendants<Cell>();
+			var rows = sheet.Descendants<Row>();
+
+			Console.WriteLine("Row count = {0}", rows.LongCount());
+			Console.WriteLine("Cell count = {0}", cells.LongCount());
+
+				/// One way: go through each cell in the sheet
+				foreach (Cell cell in cells)
+				{
+					if ((cell.DataType != null) && (cell.DataType == CellValues.SharedString))
+					{
+						int ssid = int.Parse(cell.CellValue.Text);
+						string str = sst.ChildElements[ssid].InnerText;
+						Console.WriteLine("Cell string {0}: {1}: {2}", ssid, cell.CellReference, str);
+					}
+					else if (cell.CellValue != null)
+					{
+						Console.WriteLine("Cell contents: {0}", cell.CellValue.Text);
+					}
+				}
+			}
+	}
+}
+
+static WorksheetPart GetWorksheetPartByName(SpreadsheetDocument document, string sheetName)
+{
+	IEnumerable<Sheet> sheets = document.WorkbookPart.Workbook.GetFirstChild<Sheets>().Elements<Sheet>().Where(s => s.Name == sheetName);
+
+	if (sheets.Count() == 0)
+	{
+		// The specified worksheet does not exist.
+		return null;
+	}
+
+	string relationshipId = sheets.First().Id.Value;
+	WorksheetPart worksheetPart = (WorksheetPart)document.WorkbookPart.GetPartById(relationshipId);
+
+	return worksheetPart;
+}
+
+static Cell GetCell(Worksheet worksheet, string columnName, uint rowIndex)
+{
+	Row row = GetRow(worksheet, rowIndex);
+
+	if (row == null)
+	{
+		return null;
+	}
+
+	return row.Elements<Cell>().Where(c => string.Compare(c.CellReference.Value, columnName + rowIndex, true) == 0).First();
+}
+static Row GetRow(Worksheet worksheet, uint rowIndex)
+{
+	return worksheet.GetFirstChild<SheetData>().Elements<Row>().Where(r => r.RowIndex == rowIndex).First();
+}
+void migrate02_67()
+{
+	string fileName = @"d:\AllNewContract2567v.1.00.01.xlsx";
+	using (FileStream fs = new FileStream(fileName, FileMode.Open, FileAccess.Read, FileShare.ReadWrite))
+	{
+		using (SpreadsheetDocument doc = SpreadsheetDocument.Open(fs, false))
+		{
+			WorkbookPart workbookPart = doc.WorkbookPart;
+			SharedStringTablePart sstpart = workbookPart.GetPartsOfType<SharedStringTablePart>().First();
+			SharedStringTable sst = sstpart.SharedStringTable;
+
+			WorksheetPart worksheetPart = workbookPart.WorksheetParts.First();
+			Worksheet sheet = worksheetPart.Worksheet;
+
+			var cells = sheet.Descendants<Cell>();
+			var rows = sheet.Descendants<Row>();
+
+			Console.WriteLine("Row count = {0}", rows.LongCount());
+			Console.WriteLine("Cell count = {0}", cells.LongCount());
+
+			// One way: go through each cell in the sheet
+			foreach (Cell cell in cells)
+			{
+				if ((cell.DataType != null) && (cell.DataType == CellValues.SharedString))
+				{
+					int ssid = int.Parse(cell.CellValue.Text);
+					string str = sst.ChildElements[ssid].InnerText;
+					Console.WriteLine("Cell string {0}: {1}: {2}", ssid, cell.CellReference, str);
+				}
+				else if (cell.CellValue != null)
+				{
+					Console.WriteLine("Cell contents: {0}", cell.CellValue.Text);
+				}
+			}
+
+			// Or... via each row
+			//foreach (Row row in rows)
+			//{
+			//	foreach (Cell c in row.Elements<Cell>())
+			//	{
+			//		if ((c.DataType != null) && (c.DataType == CellValues.SharedString))
+			//		{
+			//			int ssid = int.Parse(c.CellValue.Text);
+			//			string str = sst.ChildElements[ssid].InnerText;
+			//			Console.WriteLine("Row string {0}: {1}: {2}", ssid, c.CellReference, str);
+			//		}
+			//		else if (c.CellValue != null)
+			//		{
+			//			Console.WriteLine("Cell contents: {0}", c.CellValue.Text);
+			//		}
+			//	}
+			//}
+		}
+	}
+}
 void migrate03()
 {
 	Console.WriteLine(" === Open Connection === ");
@@ -83,7 +244,11 @@ void migrate02()
 	//String docName = @"d:\branch.v.4.xlsx";
 	//String docName = @"d:\branch.v.5.xlsx";
 	//String docName = @"d:\B01.csv";
-	String docName = @"d:\B08.xlsx";
+	//String docName = @"d:\B08.xlsx";
+
+	//String docName = @"d:\b1.xlsx";
+	//String docName = @"d:\c1.xlsx";
+	String docName = @"d:\d1.xlsx";
 
 	///=== สาขา
 	//string worksheetName = "สาขา";

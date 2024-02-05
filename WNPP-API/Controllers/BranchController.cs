@@ -20,14 +20,14 @@ namespace WNPP_API.Controllers
 		}
 		[HttpPost]
 		[ActionName("UpdateBranch")]
-		public TBranchViewModel UpdateBranch(TBranchViewModel data)
+		public TBranch UpdateBranch(TBranchViewModel data)
 		{
 			_logger.LogTrace("UpdateBranch Data : " + data);
 			return _service.updateBranch(data);
 		}
 		[HttpPost]
 		[ActionName("AddBranch")]
-		public TBranchViewModel AddBranch(TBranchViewModel data)
+		public TBranch AddBranch(TBranchViewModel data)
 		{
 			_logger.LogTrace("AddBranch Data : " + data);
 			return _service.addBranch(data);
@@ -49,7 +49,7 @@ namespace WNPP_API.Controllers
 
 		[HttpGet]
 		[ActionName("ListBranch")]
-		public List<TBranchViewModel> ListBranch(int branchType =0)
+		public List<TBranch> ListBranch(int branchType =0)
 		{
 			_logger.LogTrace("ListBranch Type : " + branchType);
 			return _service.listBranch(branchType);
