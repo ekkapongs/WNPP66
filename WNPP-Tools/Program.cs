@@ -770,15 +770,21 @@ void migrate02_67_02_1_1()
 {
 	{
 		string fileName = @"d:\NewContract2567v.2.04.05.xlsx";
-		string filesOut = @"d:\Test01\";
-		string sheetName = "สำรวจ";
+		string sheetName = "สำรอง";
+		
+		string filesOut = @"D:\Branch\" + sheetName + "\\";
 
 		using (FileStream fs = new FileStream(fileName, FileMode.Open, FileAccess.Read, FileShare.ReadWrite))
 		{
 			using (SpreadsheetDocument doc = SpreadsheetDocument.Open(fs, false))
 			{
 				WorkbookPart workbookPart = doc.WorkbookPart;
-				var workSheet = workbookPart.WorksheetParts.FirstOrDefault();
+
+				WorksheetPart workSheet = GetWorksheetPartByName(doc, sheetName);
+				//Worksheet workSheet = worksheetPart.Worksheet;
+
+				//WorkbookPart workbookPart = doc.WorkbookPart;
+				//var workSheet = workbookPart.WorksheetParts.FirstOrDefault();
 
 				foreach (ImagePart i in workSheet.DrawingsPart.ImageParts)
 				{
